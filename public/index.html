@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SuperMart Billing System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- INTRO SCREEN -->
+  <div id="intro-screen" class="screen active">
+    <canvas id="grain-canvas" class="grain-overlay"></canvas>
+    <div class="scanlines"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="intro-bg"></div>
+
+    <div class="corner-label top-left">
+      <span class="cl-line">SYS</span>
+      <span class="cl-line">v1.0</span>
+    </div>
+    <div class="corner-label top-right">
+      <span class="cl-line">POS</span>
+      <span class="cl-line">READY</span>
+    </div>
+    <div class="corner-label bottom-left">
+      <span class="cl-line">AIT</span>
+      <span class="cl-line">PUNE</span>
+    </div>
+
+    <div class="intro-content">
+      <div class="intro-badge-row">
+        <span class="intro-badge">◈ SUPERMART BILLING &amp; INVENTORY ◈</span>
+      </div>
+
+      <div class="glitch-wrapper">
+        <h1 class="intro-title glitch" data-text="SUPER">SUPER</h1>
+        <h1 class="intro-title glitch intro-title-2" data-text="MART">MART</h1>
+      </div>
+
+      <p class="intro-sub">
+        <span class="sub-dash">——</span>
+        FAST &nbsp;•&nbsp; RELIABLE &nbsp;•&nbsp; SIMPLE
+        <span class="sub-dash">——</span>
+      </p>
+
+      <div class="intro-stats">
+        <div class="stat-item">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">PRODUCTS</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">3</span>
+          <span class="stat-label">PAY MODES</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">0ms</span>
+          <span class="stat-label">LATENCY</span>
+        </div>
+      </div>
+
+      <div class="btn-enter-wrap">
+        <button class="btn-enter" onclick="showMainMenu()">
+          <span class="btn-enter-text">ENTER SYSTEM</span>
+          <span class="btn-enter-arrow">→</span>
+          <span class="btn-enter-glow"></span>
+        </button>
+      </div>
+
+      <div class="intro-meta">
+        <span>Made by <strong>Siddharth Gadhave</strong></span>
+        <span class="divider">|</span>
+        <span>Army Institute of Technology, Pune</span>
+      </div>
+    </div>
+
+    <div class="ticker">SUPERMART BILLING SYSTEM &nbsp;•&nbsp; FAST &nbsp;•&nbsp; RELIABLE &nbsp;•&nbsp; SIMPLE &nbsp;•&nbsp; SUPERMART BILLING SYSTEM &nbsp;•&nbsp; FAST &nbsp;•&nbsp; RELIABLE &nbsp;•&nbsp;</div>
+  </div>
+
+ 
+
+  <!-- CUSTOMER SCREEN -->
+  <div id="customer-screen" class="screen">
+    <header class="top-bar">
+      <button class="btn-back" onclick="showMainMenu()">← BACK</button>
+      <span class="logo-text">PLACE ORDER</span>
+      <span class="cart-count" id="cart-count">Cart: 0</span>
+    </header>
+    <!-- ===== SEARCH BAR (ADD ONLY) ===== -->
+<div style="padding: 12px 20px;">
+  <input 
+    type="text" 
+    id="product-search" 
+    placeholder="🔍 Search products..." 
+    oninput="searchProducts()"
+    style="
+      width:100%;
+      padding:12px 16px;
+      border-radius:30px;
+      border:1px solid #333;
+      background:rgba(255,255,255,0.05);
+      color:#fff;
+      outline:none;
+      font-family: 'DM Mono', monospace;
+      letter-spacing:1px;
+    "
+  />
+</div>
+    <div class="product-grid" id="product-grid"></div>
+    <div class="sticky-footer">
+      <button class="btn-primary" onclick="showScreen('invoice-screen'); renderInvoice()">
+        VIEW INVOICE &amp; CHECKOUT →
+      </button>
+    </div>
+  </div>
+
+  <!-- INVOICE SCREEN -->
+  <div id="invoice-screen" class="screen">
+    <header class="top-bar">
+      <button class="btn-back" onclick="showScreen('customer-screen')">← BACK</button>
+      <span class="logo-text">INVOICE</span>
+      <span class="system-label" id="invoice-date"></span>
+    </header>
+    <div class="invoice-wrapper">
+      <div class="invoice-header">
+        <h2>★ SUPERMART ★</h2>
+        <p>BILLING RECEIPT</p>
+      </div>
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>NO.</th><th>PRODUCT</th><th>QTY</th>
+            <th>PRICE</th><th>AMT</th><th>DISC</th><th>FINAL</th>
+          </tr>
+        </thead>
+        <tbody id="invoice-body"></tbody>
+      </table>
+      <div class="invoice-total" id="invoice-total"></div>
+      <button class="btn-primary full" onclick="openPaymentModal()">💰 PROCEED TO PAYMENT</button>
+      <button class="btn-outline full" onclick="resetOrder()">🔄 NEW ORDER</button>
+    </div>
+  </div>
+
+  <!-- ADMIN SCREEN -->
+  <div id="admin-screen" class="screen">
+    <header class="top-bar">
+      <button class="btn-back" onclick="showMainMenu()">← BACK</button>
+      <span class="logo-text">ADMIN PANEL</span>
+      <span class="system-label" id="product-count-label">0 Products</span>
+    </header>
+    <div class="admin-layout">
+      <nav class="admin-nav">
+        <button class="nav-btn active" onclick="adminTab('create')">＋ Create Product</button>
+        <button class="nav-btn" onclick="adminTab('display')">≡ All Products</button>
+        <button class="nav-btn" onclick="adminTab('modify')">✎ Modify</button>
+        <button class="nav-btn" onclick="adminTab('delete')">✕ Delete</button>
+        <button class="nav-btn" onclick="adminTab('query')">🔍 Query</button><button class="nav-btn" onclick="adminTab('sales')">Total Sales</button>
+      </nav>
+      <div class="admin-panel" id="admin-panel"></div>
+    </div>
+  </div>
+
+  <!-- EXIT MODAL — BUG FIX: closeModal() before showScreen() -->
+  <div id="exit-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h3>EXIT SYSTEM?</h3>
+      <p>Are you sure you want to close SuperMart?</p>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeModal()">CANCEL</button>
+        <button class="btn-danger" onclick="closeModal(); showScreen('intro-screen')">EXIT</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="products.js"></script>
+  <script src="invoice.js"></script>
+  <script src="admin.js"></script>
+  <script src="app.js"></script>
+
+  <!-- PAYMENT MODAL -->
+  <div id="payment-modal" class="modal-overlay" style="display:none">
+    <div class="payment-box">
+      <div id="payment-form-area">
+        <h3>SELECT PAYMENT MODE</h3>
+        <div class="payment-total-line">GRAND TOTAL &nbsp;&nbsp; <span id="pay-total-display">Rs.0.00</span></div>
+        <div class="pay-modes">
+          <div class="pay-mode-card" id="pay-cash" onclick="selectPaymentMode('cash')">
+            <div class="pay-mode-icon">💵</div>
+            <div class="pay-mode-label">CASH</div>
+          </div>
+          <div class="pay-mode-card" id="pay-upi" onclick="selectPaymentMode('upi')">
+            <div class="pay-mode-icon">📱</div>
+            <div class="pay-mode-label">UPI</div>
+          </div>
+          <div class="pay-mode-card" id="pay-card" onclick="selectPaymentMode('card')">
+            <div class="pay-mode-icon">💳</div>
+            <div class="pay-mode-label">CARD</div>
+          </div>
+        </div>
+        <div class="pay-section" id="cash-section" style="display:none">
+          <label>AMOUNT TENDERED (Rs.)</label>
+          <input type="number" id="cash-input" placeholder="Enter cash amount" min="0" step="0.01" oninput="calcChange()"/>
+          <div id="cash-change"></div>
+        </div>
+        <div class="pay-section" id="upi-section" style="display:none">
+          <label>UPI ID (OPTIONAL)</label>
+          <input type="text" id="upi-id-input" placeholder="e.g. name@upi"/>
+          <div class="upi-qr-hint">Payment will be recorded as UPI transfer</div>
+        </div>
+        <div class="pay-section" id="card-section" style="display:none">
+          <label>CARD TYPE</label>
+          <select id="card-type-select">
+            <option value="visa">VISA</option>
+            <option value="mastercard">MASTERCARD</option>
+            <option value="rupay">RUPAY</option>
+            <option value="amex">AMEX</option>
+          </select>
+        </div>
+        <div class="payment-actions">
+          <button class="btn-primary" id="pay-confirm-btn" onclick="confirmPayment()" disabled>CONFIRM PAYMENT</button>
+          <button class="btn-outline" onclick="closePaymentModal()">CANCEL</button>
+        </div>
+      </div>
+      <div id="payment-success" style="display:none"></div>
+    </div>
+  </div>
+
+  <script>
+    // Animated film grain on intro
+    const canvas = document.getElementById('grain-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      function resizeGrain() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      function drawGrain() {
+        const w = canvas.width, h = canvas.height;
+        const imageData = ctx.createImageData(w, h);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const v = Math.random() * 255;
+          data[i] = v; data[i+1] = v; data[i+2] = v;
+          data[i+3] = Math.random() * 20;
+        }
+        ctx.putImageData(imageData, 0, 0);
+        requestAnimationFrame(drawGrain);
+      }
+      resizeGrain();
+      drawGrain();
+      window.addEventListener('resize', resizeGrain);
+    }
+  </script>
+</body>
+</html>
+
+  <!-- MAIN MENU  -->
+  <div id="main-menu" class="screen">
+
+    <div class="mm-scanlines"></div>
+    <div class="mm-grid-bg"></div>
+
+    <!-- HUD top bar -->
+    <div class="mm-hud">
+      <div class="mm-hud-left">
+        <span class="mm-hud-tag">◈ SUPERMART POS v1.0</span>
+        <span class="mm-hud-divider">|</span>
+        <span class="mm-hud-tag" id="mm-datetime">--:-- --</span>
+      </div>
+      <div class="mm-hud-center">
+        <span class="mm-logo-glitch" data-text="SUPERMART">SUPERMART</span>
+      </div>
+      <div class="mm-hud-right">
+        <span class="mm-hud-tag">PRODUCTS&nbsp;<span id="mm-prod-count" style="color:var(--accent)">--</span></span>
+        <span class="mm-hud-divider">|</span>
+        <span class="mm-hud-tag mm-status">● ONLINE</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="mm-body">
+
+      <div class="mm-side-label">
+        <span>SELECT</span>
+        <span>MODE</span>
+      </div>
+
+      <div class="mm-cards">
+
+        <!-- CUSTOMER -->
+        <div class="mm-card mm-card--customer" onclick="showScreen('customer-screen')">
+          <div class="mm-card-noise"></div>
+          <div class="mm-card-number">01</div>
+          <div class="mm-card-content">
+            <div class="mm-card-tag">CUSTOMER MODE</div>
+            <h2 class="mm-card-title" data-text="SHOP">SHOP</h2>
+            <p class="mm-card-desc">Browse 50+ products, add to cart &amp; generate invoice instantly.</p>
+            <div class="mm-card-footer">
+              <span class="mm-card-cta">ENTER →</span>
+              <span class="mm-card-hint">Products / Orders / Billing</span>
+            </div>
+          </div>
+          <div class="mm-card-stripe"></div>
+        </div>
+
+        <!-- Right col -->
+        <div class="mm-cards-right">
+
+          <div class="mm-card mm-card--admin" onclick="showScreen('admin-screen')">
+            <div class="mm-card-noise"></div>
+            <div class="mm-card-number">02</div>
+            <div class="mm-card-content">
+              <div class="mm-card-tag">ADMIN MODE</div>
+              <h2 class="mm-card-title" data-text="MANAGE">MANAGE</h2>
+              <p class="mm-card-desc">Full inventory control — create, edit &amp; delete products.</p>
+              <div class="mm-card-footer">
+                <span class="mm-card-cta">ENTER →</span>
+                <span class="mm-card-hint">Inventory / CRUD</span>
+              </div>
+            </div>
+            <div class="mm-card-stripe mm-card-stripe--blue"></div>
+          </div>
+
+          <div class="mm-card mm-card--exit" onclick="confirmExit()">
+            <div class="mm-card-noise"></div>
+            <div class="mm-card-number">03</div>
+            <div class="mm-card-content mm-card-content--exit">
+              <div class="mm-card-tag mm-card-tag--red">SYSTEM</div>
+              <h2 class="mm-card-title mm-card-title--red" data-text="EXIT">EXIT</h2>
+              <div class="mm-card-footer">
+                <span class="mm-card-cta mm-card-cta--red">TERMINATE →</span>
+              </div>
+            </div>
+            <div class="mm-card-stripe mm-card-stripe--red"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mm-side-label mm-side-label--right">
+        <span>AIT</span>
+        <span>PUNE</span>
+      </div>
+
+    </div>
+
+    <!-- Bottom ticker -->
+    <div class="mm-ticker-bar">
+      <div class="mm-ticker-inner">
+        SUPERMART &nbsp;◈&nbsp; BILLING SYSTEM &nbsp;◈&nbsp; POS v1.0 &nbsp;◈&nbsp; FAST &nbsp;◈&nbsp; RELIABLE &nbsp;◈&nbsp; SIMPLE &nbsp;◈&nbsp; SUPERMART &nbsp;◈&nbsp; BILLING SYSTEM &nbsp;◈&nbsp; POS v1.0 &nbsp;◈&nbsp; FAST &nbsp;◈&nbsp; RELIABLE &nbsp;◈&nbsp; SIMPLE &nbsp;◈&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CUSTOMER SCREEN -->
+  <div id="customer-screen" class="screen">
+    <header class="top-bar">
+      <button class="btn-back" onclick="showMainMenu()">← BACK</button>
+      <span class="logo-text">PLACE ORDER</span>
+      <span class="cart-count" id="cart-count">Cart: 0</span>
+    </header>
+    <div class="product-grid" id="product-grid">
+      <!-- Products rendered by JS -->
+    </div>
+    <div class="sticky-footer">
+      <button class="btn-primary" onclick="showScreen('invoice-screen'); renderInvoice()">
+        VIEW INVOICE &amp; CHECKOUT →
+      </button>
+    </div>
+  </div>
+
+  <!-- INVOICE SCREEN -->
+  <div id="invoice-screen" class="screen">
+    <header class="top-bar">
+      <button class="btn-back" onclick="showScreen('customer-screen')">← BACK</button>
+      <span class="logo-text">INVOICE</span>
+      <span class="system-label" id="invoice-date"></span>
+    </header>
+    <div class="invoice-wrapper">
+      <div class="invoice-header">
+        <h2>★ SUPERMART ★</h2>
+        <p>BILLING RECEIPT</p>
+      </div>
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>NO.</th>
+            <th>PRODUCT</th>
+            <th>QTY</th>
+            <th>PRICE</th>
+            <th>AMT</th>
+            <th>DISC</th>
+            <th>FINAL</th>
+          </tr>
+        </thead>
+        <tbody id="invoice-body"></tbody>
+      </table>
+      <div class="invoice-total" id="invoice-total"></div>
+      <button class="btn-primary full" onclick="openPaymentModal()">💰 PROCEED TO PAYMENT</button>
+      <button class="btn-outline full" onclick="resetOrder()">🔄 NEW ORDER</button>
+    </div>
+  </div>
+
+  <!-- ADMIN SCREEN -->
+  <div id="admin-screen" class="screen">
+    <header class="top-bar">
+      <button class="btn-back" onclick="showMainMenu()">← BACK</button>
+      <span class="logo-text">ADMIN PANEL</span>
+      <span class="system-label" id="product-count-label">0 Products</span>
+    </header>
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <nav class="admin-nav">
+        <button class="nav-btn active" onclick="adminTab('create')">＋ Create Product</button>
+        <button class="nav-btn" onclick="adminTab('display')">≡ All Products</button>
+        <button class="nav-btn" onclick="adminTab('modify')">✎ Modify</button>
+        <button class="nav-btn" onclick="adminTab('delete')">✕ Delete</button>
+        <button class="nav-btn" onclick="adminTab('query')">🔍 Query</button><button class="nav-btn" onclick="adminTab('sales')">Total Sales</button>
+      </nav>
+      <!-- Panels -->
+      <div class="admin-panel" id="admin-panel">
+        <!-- Rendered by admin.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- EXIT MODAL -->
+  <div id="exit-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h3>EXIT SYSTEM?</h3>
+      <p>Are you sure you want to close SuperMart?</p>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeModal()">CANCEL</button>
+       <button class="btn-danger" onclick="closeModal(); showScreen('intro-screen')">EXIT</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="products.js"></script>
+  <script src="invoice.js"></script>
+  <script src="admin.js"></script>
+  <script src="app.js"></script>
+
+  <!-- PAYMENT MODAL -->
+  <div id="payment-modal" class="modal-overlay" style="display:none">
+    <div class="payment-box">
+      <div id="payment-form-area">
+        <h3>SELECT PAYMENT MODE</h3>
+        <div class="payment-total-line">GRAND TOTAL &nbsp;&nbsp; <span id="pay-total-display">Rs.0.00</span></div>
+        <div class="pay-modes">
+          <div class="pay-mode-card" id="pay-cash" onclick="selectPaymentMode('cash')">
+            <div class="pay-mode-icon">💵</div>
+            <div class="pay-mode-label">CASH</div>
+          </div>
+          <div class="pay-mode-card" id="pay-upi" onclick="selectPaymentMode('upi')">
+            <div class="pay-mode-icon">📱</div>
+            <div class="pay-mode-label">UPI</div>
+          </div>
+          <div class="pay-mode-card" id="pay-card" onclick="selectPaymentMode('card')">
+            <div class="pay-mode-icon">💳</div>
+            <div class="pay-mode-label">CARD</div>
+          </div>
+        </div>
+        <!-- CASH -->
+        <div class="pay-section" id="cash-section" style="display:none">
+          <label>AMOUNT TENDERED (Rs.)</label>
+          <input type="number" id="cash-input" placeholder="Enter cash amount" min="0" step="0.01" oninput="calcChange()"/>
+          <div id="cash-change"></div>
+        </div>
+        <!-- UPI -->
+        <div class="pay-section" id="upi-section" style="display:none">
+          <label>UPI ID (OPTIONAL)</label>
+          <input type="text" id="upi-id-input" placeholder="e.g. name@upi"/>
+          <div class="upi-qr-hint" style="font-family:monospace;font-size:11px;color:#666;margin-top:10px;letter-spacing:1px;">Payment will be recorded as UPI transfer</div>
+        </div>
+        <!-- CARD -->
+        <div class="pay-section" id="card-section" style="display:none">
+          <label>CARD TYPE</label>
+          <select id="card-type-select">
+            <option value="visa">VISA</option>
+            <option value="mastercard">MASTERCARD</option>
+            <option value="rupay">RUPAY</option>
+            <option value="amex">AMEX</option>
+          </select>
+        </div>
+        <div class="payment-actions">
+          <button class="btn-primary" id="pay-confirm-btn" onclick="confirmPayment()" disabled>CONFIRM PAYMENT</button>
+          <button class="btn-outline" onclick="closePaymentModal()">CANCEL</button>
+        </div>
+      </div>
+      <div id="payment-success" style="display:none"></div>
+    </div>
+  </div>
+</body>
+</html>
